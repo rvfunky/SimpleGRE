@@ -15,6 +15,8 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -22,15 +24,23 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int MY_INTENT_CLICK=302;
     Button btn;
+    String delimiter;
     TextToSpeech textToSpeech;
     HashMap hashmap = new HashMap<String,String>();
+    File file;
+    //RadioGroup radioGroup = (RadioGroup) findViewById(R.id.myRadioGroup);
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
             public void onInit(int status) {
                 if(status != TextToSpeech.ERROR){
                     textToSpeech.setLanguage(Locale.ENGLISH);
+                    textToSpeech.setSpeechRate((float)0.8);
                 }
             }
         });
@@ -97,6 +108,40 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        /*radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                System.out.println("half successss"+checkedId);
+            }
+        });*/
+    }
+
+    public void onRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+        //System.out.println("print success");
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.comma:
+                if (checked)
+                    // Pirates are the best
+                    delimiter=",";
+                    break;
+            case R.id.colon:
+                if (checked)
+                    // Ninjas rule
+                    delimiter=":";
+                    break;
+            case R.id.equalTo:
+                if (checked)
+                    delimiter = "=";
+                    break;
+            case R.id.space:
+                if (checked)
+                    delimiter = "\\s+";
+        }
     }
 
     @Override
@@ -114,12 +159,17 @@ public class MainActivity extends AppCompatActivity {
 
                 //MEDIA GALLERY
                 selectedImagePath = ImageFilePath.getPath(getApplicationContext(), selectedImageUri);
+                String nameOfFile;
+                String[] parts = selectedImagePath.split("/");
+                int len2 = parts.length;
+                Toast t = Toast.makeText(getApplicationContext(),parts[len2-1],Toast.LENGTH_LONG);
+                System.out.println(parts[len2-1]);
                 Log.i("Image File Path", ""+selectedImagePath);
                 //txta.setText("File Path : \n"+selectedImagePath);
                 Toast toast = Toast.makeText(getApplicationContext(),selectedImagePath,Toast.LENGTH_LONG);
 
                 toast.show();
-                File file = new File(selectedImagePath);
+                file = new File(selectedImagePath);
                 StringBuilder text = new StringBuilder();
 
                 try {
@@ -127,8 +177,16 @@ public class MainActivity extends AppCompatActivity {
                     String line;
 
                     while ((line = br.readLine()) != null) {
-                        text.append(line);
-                        text.append('\n');
+                        //text.append(line);
+                        //text.append('\n');
+                        String[] strings = line.split("\\s+");
+                        StringBuilder builder = new StringBuilder();
+                        int len = strings.length;
+                        for(int i=1;i<len;i++){
+                            builder.append(strings[i]);
+                        }
+                        hashmap.put(strings[0].trim(),builder.toString().trim());
+
                     }
                     br.close();
                 }
@@ -137,9 +195,15 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 //System.out.println("this is text"+text);
+                Iterator iterator = hashmap.entrySet().iterator();
+                while(iterator.hasNext()){
+                    Map.Entry<String,String> pair = (Map.Entry)iterator.next();
+                    textToSpeech.speak(pair.getKey().toString().trim(), TextToSpeech.QUEUE_ADD, null);
+                    textToSpeech.speak(pair.getValue(), TextToSpeech.QUEUE_ADD, null);
+                    textToSpeech.playSilence(750, TextToSpeech.QUEUE_ADD, null);
+                }
+                //String toSpeak = "hello raghu. Welcome to the world of android. How are you doing today?";
 
-                String toSpeak = "hello raghu. Welcome to the world of android. How are you doing today?";
-                textToSpeech.speak(text.toString(), TextToSpeech.QUEUE_FLUSH, null);
 
             }
         }

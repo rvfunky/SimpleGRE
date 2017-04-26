@@ -1,19 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.raghavendrkolisetty.test.MainActivity">
-
-
-
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="144dp"
-        tools:layout_editor_absoluteY="178dp" />
+        android:text="Choose File"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp" />
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvSelectedFileDisplay"/>
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="35dp"
+        android:id="@+id/myRadioGroup">
+        <android.support.v7.widget.AppCompatCheckedTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="5dp"
+            android:text="Please select the delimiter"
+            android:textSize="20dp" />
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="space"
+            android:id="@+id/space"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text=":"
+            android:textStyle="bold"
+            android:id="@+id/colon"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="="
+            android:textStyle="bold"
+            android:id="@+id/equalTo"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text=","
+            android:textStyle="bold"
+            android:id="@+id/comma"
+            android:onClick="onRadioButtonClicked"/>
+    </RadioGroup>
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.v7.widget.AppCompatButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="start reading"
+        android:layout_gravity="center"
+        android:id="@+id/btnStartReading"/>
+</LinearLayout>
