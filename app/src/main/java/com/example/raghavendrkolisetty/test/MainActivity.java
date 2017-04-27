@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 public class MainActivity extends AppCompatActivity {
 
     private static final int MY_INTENT_CLICK=302;
-    Button btn;
+    Button btn,btnStartReading;
     String delimiter;
     TextToSpeech textToSpeech;
     HashMap hashmap = new HashMap<String,String>();
@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
                     1);
         }
         btn = (Button)findViewById(R.id.button);
+        btnStartReading = (Button) findViewById(R.id.btnStartReading);
         textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                /*File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                 System.out.println(path);
                 File file = new File(path,"test.txt");
                 System.out.println(file);
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 catch (IOException e) {
                     //You'll need to add proper error handling here
-                }
+                }*/
 
                 //System.out.println("this is text"+text);
 
@@ -106,6 +107,44 @@ public class MainActivity extends AppCompatActivity {
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select File"),MY_INTENT_CLICK);
 
+            }
+        });
+
+        btnStartReading.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StringBuilder text = new StringBuilder();
+
+                try {
+                    BufferedReader br = new BufferedReader(new FileReader(file));
+                    String line;
+
+                    while ((line = br.readLine()) != null) {
+                        //text.append(line);
+                        //text.append('\n');
+                        String[] strings = line.split(delimiter);
+                        StringBuilder builder = new StringBuilder();
+                        int len = strings.length;
+                        for(int i=1;i<len;i++){
+                            builder.append(strings[i]);
+                        }
+                        hashmap.put(strings[0].trim(),builder.toString().trim());
+
+                    }
+                    br.close();
+                }
+                catch (IOException e) {
+                    //You'll need to add proper error handling here
+                }
+
+                //System.out.println("this is text"+text);
+                Iterator iterator = hashmap.entrySet().iterator();
+                while(iterator.hasNext()){
+                    Map.Entry<String,String> pair = (Map.Entry)iterator.next();
+                    textToSpeech.speak(pair.getKey().toString().trim(), TextToSpeech.QUEUE_ADD, null);
+                    textToSpeech.speak(pair.getValue(), TextToSpeech.QUEUE_ADD, null);
+                    textToSpeech.playSilence(750, TextToSpeech.QUEUE_ADD, null);
+                }
             }
         });
 
@@ -170,44 +209,15 @@ public class MainActivity extends AppCompatActivity {
 
                 toast.show();
                 file = new File(selectedImagePath);
-                StringBuilder text = new StringBuilder();
 
-                try {
-                    BufferedReader br = new BufferedReader(new FileReader(file));
-                    String line;
-
-                    while ((line = br.readLine()) != null) {
-                        //text.append(line);
-                        //text.append('\n');
-                        String[] strings = line.split("\\s+");
-                        StringBuilder builder = new StringBuilder();
-                        int len = strings.length;
-                        for(int i=1;i<len;i++){
-                            builder.append(strings[i]);
-                        }
-                        hashmap.put(strings[0].trim(),builder.toString().trim());
-
-                    }
-                    br.close();
-                }
-                catch (IOException e) {
-                    //You'll need to add proper error handling here
-                }
-
-                //System.out.println("this is text"+text);
-                Iterator iterator = hashmap.entrySet().iterator();
-                while(iterator.hasNext()){
-                    Map.Entry<String,String> pair = (Map.Entry)iterator.next();
-                    textToSpeech.speak(pair.getKey().toString().trim(), TextToSpeech.QUEUE_ADD, null);
-                    textToSpeech.speak(pair.getValue(), TextToSpeech.QUEUE_ADD, null);
-                    textToSpeech.playSilence(750, TextToSpeech.QUEUE_ADD, null);
-                }
                 //String toSpeak = "hello raghu. Welcome to the world of android. How are you doing today?";
 
 
             }
         }
     }
+
+
 }
 
 
